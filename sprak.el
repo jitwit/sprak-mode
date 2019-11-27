@@ -1,5 +1,17 @@
 ;; sprak.el --- Using Emacs to interact with Else Heart.Break() and Sprak -*- lexical-binding: t -*-
 
+;;;; GROUPS
+(defgroup sprak nil
+  "Major mode for Sprak programs"
+  :group 'languages
+  :prefix "sprak-")
+
+(defcustom sprak-mode-hook nil
+  "Hook called by `sprak-mode'"
+  :type 'hook
+  :group 'sprak)
+
+;;;; FUNS
 (defun sprank ()
   "Yank a Sprak program to clipboard. This makes it easy to write
 programs in emacs and paste them into items in the game."
@@ -7,11 +19,13 @@ programs in emacs and paste them into items in the game."
   (save-excursion
     (kill-ring-save (point-min) (point-max))))
 
+;;;; KEYMAP
 (defvar sprak-mode-keymap
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c c") 'sprank)
     map))
 
+;;;; KEYWORDS
 (defvar sprak-types
   '("void" "number" "string" "array" "bool" "var"))
 (defvar sprak-assignment-operators
@@ -23,21 +37,42 @@ programs in emacs and paste them into items in the game."
 (defvar sprak-keyword
   `(,@sprak-assignment-operators ,@sprak-control-flow))
 
+;;;; CUSTOM FACES
 (defvar sprak-keyword-face
-  font-lock-builtin-face)
+  (defface sprak-keyword-face
+    '((t (:foreground "#33aaaa")))
+    ;;    '((((background dark)) (:foreground "IndianRed")) (((background light)) (:foreground "Red3")))
+    "Face to higlight control flow related keywords"
+    :group 'sprak-faces))
 (defvar sprak-type-face
-  font-lock-type-face)
+  (defface sprak-type-face
+    '((t  (:foreground "#00afff")))
+    "Face to higlight sprak types"
+    :group 'sprak-faces))
 (defvar sprak-operator-face
-  font-lock-comment-delimiter-face)
+  (defface sprak-operator-face
+    '((t (:foreground "Pink")))
+    "Face to higlight sprak math/infix operations"
+    :group 'sprak-faces))
 (defvar sprak-constant-face
-  font-lock-preprocessor-face)
+  (defface sprak-constant-face
+    '((t (:foreground "#33aaaa")))
+    "Face to higlight sprak literals"
+    :group 'sprak-faces))
 (defvar sprak-fundef-face
-  font-lock-function-name-face)
+  (defface sprak-fundef-face
+    '((t (:foreground "#31ffbb")))
+    "Face to higlight sprak function definitions"
+    :group 'sprak-faces))
 (defvar sprak-vardef-face
-  font-lock-function-name-face)
+  (defface sprak-vardef-face
+    '((t (:foreground "#31ffbb")))
+    "Face to higlight sprak function definitions"
+    :group 'sprak-faces))
 (defvar sprak-funarg-face
   font-lock-constant-face)
 
+;;;; REGEXPS
 (defvar sprak-constants-regexp
   (rx (or "true"
           "false"
@@ -51,8 +86,6 @@ programs in emacs and paste them into items in the game."
 (defvar sprak-operator-regexp
   (regexp-opt sprak-operators 'symbols))
 
-;; most likely a poorly written regexp but it seems to do the trick!
-;; would be nice to not highlight commas too.
 (defvar sprak-function-definition-regexp
   (rx (seq (group-n 1 (eval `(or ,@sprak-types)))
            (+ space)
@@ -69,6 +102,7 @@ programs in emacs and paste them into items in the game."
            (* space)
            (group-n 3 "="))))
 
+;;;; FONT LOCK
 (defvar sprak-font-lock-defaults
   `(((,sprak-function-definition-regexp (1 ,sprak-type-face)
                                         (2 ,sprak-fundef-face)
@@ -81,6 +115,7 @@ programs in emacs and paste them into items in the game."
      (,sprak-operator-regexp . sprak-operator-face)
      (,sprak-constants-regexp . sprak-constant-face))))
 
+;;;; SYNTAX TABLE
 (defvar sprak-syntax-table
   (let ((T (make-syntax-table)))
     (modify-syntax-entry ?#  "< " T)
@@ -92,6 +127,7 @@ programs in emacs and paste them into items in the game."
     T)
   "Syntax table for Sprak")
 
+;;;; MODE DEFN
 (define-derived-mode sprak-mode fundamental-mode "Sprak"
   "Major mode for Sprak programs"
   :syntax-table sprak-syntax-table
