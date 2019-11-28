@@ -40,13 +40,13 @@ programs in emacs and paste them into items in the game."
 ;;;; CUSTOM FACES
 (defvar sprak-keyword-face
   (defface sprak-keyword-face
-    '((t (:foreground "#33aaaa")))
+    '((t (:foreground "#ff99cc")))
     ;;    '((((background dark)) (:foreground "IndianRed")) (((background light)) (:foreground "Red3")))
     "Face to higlight control flow related keywords"
     :group 'sprak-faces))
 (defvar sprak-type-face
   (defface sprak-type-face
-    '((t  (:foreground "#00afff")))
+    '((t  (:foreground "#ff6699")))
     "Face to higlight sprak types"
     :group 'sprak-faces))
 (defvar sprak-operator-face
@@ -56,21 +56,24 @@ programs in emacs and paste them into items in the game."
     :group 'sprak-faces))
 (defvar sprak-constant-face
   (defface sprak-constant-face
-    '((t (:foreground "#33aaaa")))
+    '((t (:foreground "#ff9900")))
     "Face to higlight sprak literals"
     :group 'sprak-faces))
 (defvar sprak-fundef-face
   (defface sprak-fundef-face
-    '((t (:foreground "#31ffbb")))
+    '((t (:foreground "#99ff66")))
     "Face to higlight sprak function definitions"
     :group 'sprak-faces))
 (defvar sprak-vardef-face
   (defface sprak-vardef-face
-    '((t (:foreground "#31ffbb")))
+    '((t (:foreground "#6699ff")))
     "Face to higlight sprak function definitions"
     :group 'sprak-faces))
 (defvar sprak-funarg-face
-  font-lock-constant-face)
+  (defface sprak-funarg-face
+    '((t (:foreground "#99ffcc")))
+    "Face to higlight sprak function definitions"
+    :group 'sprak-faces))
 
 ;;;; REGEXPS
 (defvar sprak-constants-regexp
@@ -102,6 +105,13 @@ programs in emacs and paste them into items in the game."
            (* space)
            (group-n 3 "="))))
 
+(defvar sprak-loop-variable-regexp
+  (rx (seq (group-n 1 "loop")
+           (+ space)
+           (group-n 2 (1+ word))
+           (+ space)
+           (group-n 1 (or "from" "in")))))
+
 ;;;; FONT LOCK
 (defvar sprak-font-lock-defaults
   `(((,sprak-function-definition-regexp (1 ,sprak-type-face)
@@ -110,6 +120,8 @@ programs in emacs and paste them into items in the game."
      (,sprak-variable-definition-regexp (1 ,sprak-type-face)
                                         (2 ,sprak-vardef-face)
                                         (3 ,sprak-keyword-face))
+     (,sprak-loop-variable-regexp (1 ,sprak-keyword-face)
+                                  (2 ,sprak-vardef-face))
      (,sprak-type-regexp . sprak-type-face)
      (,sprak-keyword-regexp . sprak-keyword-face)
      (,sprak-operator-regexp . sprak-operator-face)
